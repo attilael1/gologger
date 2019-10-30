@@ -78,7 +78,7 @@ func runApp(w http.ResponseWriter, r *http.Request) {
 //loggerApp starts logging data to file
 func loggerApp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
-	if r.URL.Path != defaultPath {
+	if r.URL.Path != loggerPath {
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
