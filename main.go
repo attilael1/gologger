@@ -20,8 +20,8 @@ const (
 	By = "attilael1"
 	//Description is a simple description of the tool
 	Description = `gologger - Simple webapp for testing purposes.
-	If it receives a GET request to path "/" displays the port on which the app is running.
-	If it receives a GET request to path "/logger" display random transactional data.
+	When the server receives a GET request to path "/" displays the port on which the app is running.
+	When the server receives a GET request to path "/logger" display random transactional data.
 `
 )
 
