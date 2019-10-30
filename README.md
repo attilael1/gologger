@@ -1,8 +1,10 @@
 # gologger
 
 gologger - Simple webserver for testing purposes.
-When the server receives a GET request to path "/" displays the port on which the app is running.
-When the server receives a GET request to path "/logger" displays random transactional data.
+
+    When the server receives a GET request to path "/" displays the port on which the app is running.
+       
+    When the server receives a GET request to path "/logger" displays random transactional data.
 
 Usage of gologger:
   
