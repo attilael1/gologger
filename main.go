@@ -64,6 +64,10 @@ func main() {
 //runApp displays port of server
 func runApp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
+	if r.URL.Path != defaultPath {
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
+	}
 	if r.Method != method {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
@@ -74,6 +78,10 @@ func runApp(w http.ResponseWriter, r *http.Request) {
 //loggerApp starts logging data to file
 func loggerApp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
+	if r.URL.Path != defaultPath {
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
+	}
 	if r.Method != method {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
