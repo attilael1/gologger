@@ -1,0 +1,12 @@
+version: "2.2"
+
+services:
+  app:
+    build: .
+    image: gologger:latest
+    cpus: .50
+    cpuset: "0"
+    mem_limit: 16m
+    memswap_limit: 0
+    ports:
+    - "8080:8080"
