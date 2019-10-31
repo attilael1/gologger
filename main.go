@@ -1,4 +1,4 @@
-//gologger displays the port on which the server is running on path "/" and logs a random string to file on path "/logger/"
+//gologger displays the port on which the server is running on path "/" and logs a random string on path "/logger/"
 package main
 
 import (
