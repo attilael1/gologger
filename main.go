@@ -18,11 +18,6 @@ const (
 	method      = "GET"
 	//By sets creator
 	By = "attilael1"
-	//Description is a simple description of the tool
-	Description = `gologger - Simple webapp for testing purposes.
-	When the server receives a GET request to path "/" displays the port on which the app is running.
-	When the server receives a GET request to path "/logger" display random transactional data.
-`
 )
 
 //flags of the app
