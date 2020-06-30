@@ -112,6 +112,7 @@ func Trans() string {
 		rc := rand.Intn(len(codes))
 		code = codes[rc]
 		msg = messages[rc]
+		status = "FAILED"
 	}
 
 	duration := rand.Intn(10000)

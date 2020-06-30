@@ -4,9 +4,11 @@ services:
   app:
     build: .
     image: gologger:latest
-    cpus: .50
+    container_name: gologger
+    restart: always
+    cpus: .05
     cpuset: "0"
-    mem_limit: 16m
+    mem_limit: 8m
     memswap_limit: 0
     ports:
     - "8080:8080"
