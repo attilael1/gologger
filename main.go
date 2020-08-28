@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"text/template"
 	"time"
 )
 
@@ -17,13 +18,16 @@ const (
 	loggerPath  = "/logger"
 	method      = "GET"
 	//By sets creator
-	By = "attilael1"
+	By     = "attilael1"
+	output = `{{.Timestamp }}|{{.Tid}}|{{.User}}|{{.Operation}}|{{.Duration}}|{{.Status}}|{{.Code}}|{{.Msg}}
+`
 )
 
 //flags of the app
 var (
+	outputTmpl    *template.Template
 	address, path *string
-	port          *int
+	port, ratio   *int
 	version       *bool
 	//Version sets app version
 	Version string
@@ -35,9 +39,22 @@ var (
 	BuildDate string
 )
 
+type transaction struct {
+	Timestamp string
+	Tid       int64
+	User      string
+	Operation string
+	Duration  int
+	Status    string
+	Code      int
+	Msg       string
+}
+
 func init() {
+	outputTmpl = template.Must(template.New("output").Parse(output))
 	address = flag.String("a", "localhost", "Hostname/IP address")
 	port = flag.Int("p", 8080, "Port")
+	ratio = flag.Int("r", 5, "Failure ratio")
 	version = flag.Bool("v", false, "Display version information")
 	flag.Parse()
 }
@@ -49,7 +66,7 @@ func main() {
 
 	bind := fmt.Sprintf("%v:%v", *address, *port)
 	http.HandleFunc(defaultPath, runApp)
-	http.HandleFunc(loggerPath, loggerApp)
+	http.HandleFunc(loggerPath, logger)
 	log.Println("Server started...")
 
 	err := http.ListenAndServe(bind, nil)
@@ -70,8 +87,8 @@ func runApp(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Running App On Port", *port)
 }
 
-//loggerApp starts logging data to file
-func loggerApp(w http.ResponseWriter, r *http.Request) {
+//logger starts logging data to file
+func logger(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	if r.URL.Path != loggerPath {
 		http.Error(w, "Not Found", http.StatusNotFound)
@@ -81,7 +98,8 @@ func loggerApp(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Fprintf(w, "%v\n", Trans())
+	t := getTransaction()
+	outputTmpl.Execute(w, t)
 }
 
 //ShowVersion shows app version
@@ -97,8 +115,8 @@ func checkError(m string, err error) {
 	}
 }
 
-//Trans returns a string like a transaction log with some fields separated by pipes
-func Trans() string {
+func getTransaction() transaction {
+	//var t transaction
 	rand.Seed(time.Now().UTC().UnixNano())
 	status := "SUCCESS"
 	code := 0
@@ -106,9 +124,9 @@ func Trans() string {
 	codes := []int{101, 105, 108, 140, 155, 1205, 666, 510, 419, 440}
 	messages := []string{"Unauthorized", "Service Not Found", "No Response From Server", "System Error", "Bad Request", "Forbidden", "Authentication Required", "Service Unavailable", "Timeout", "Not Supported"}
 
-	//Set Success response ratio to 60%
+	//Set Success response ratio to %
 	p := rand.Intn(10)
-	if p > 6 {
+	if p > *ratio {
 		rc := rand.Intn(len(codes))
 		code = codes[rc]
 		msg = messages[rc]
@@ -124,8 +142,16 @@ func Trans() string {
 	ri := rand.Intn(len(users))
 	user := users[ri]
 
-	timestamp := (time.Now().Local().Format("2006-01-02 15:04:05.000"))
+	timestamp := (time.Now().Local()).Format("2006-01-02 15:04:05.000")
 	tid := time.Now().UnixNano()
-	s := fmt.Sprintf("%v|%v|%v|%v|%v|%v|%v|%v", timestamp, tid, user, operation, duration, status, code, msg)
-	return s
+	return transaction{
+		Code:      code,
+		Status:    status,
+		Msg:       msg,
+		Duration:  duration,
+		Operation: operation,
+		User:      user,
+		Timestamp: timestamp,
+		Tid:       tid,
+	}
 }
