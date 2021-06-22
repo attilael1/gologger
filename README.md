@@ -18,7 +18,7 @@ Usage of gologger:
 
 Example:
 
-    loggerapp -a 192.168.99.78 -p 9090
+    gologger -a 192.168.99.78 -p 9090
 
     2019/08/15 17:22:05 Server started...
 
