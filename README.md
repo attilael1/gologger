@@ -30,5 +30,3 @@ Example:
 
     2019-08-07 10:10:51.223|1565190651223457650|ubbo-sathla|changeUser|548|SUCCESS|0|SUCCESS
     2019-08-07 10:10:51.385|1565190651385873762|nyarlathotep|cancelProduct|1214|FAILED|440|Not Supported
-
-NOTE: Its hardcoded to give 70% SUCCESS responses

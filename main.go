@@ -106,10 +106,13 @@ func Trans() string {
 	codes := []int{101, 105, 108, 140, 155, 1205, 666, 510, 419, 440}
 	messages := []string{"Unauthorized", "Service Not Found", "No Response From Server", "System Error", "Bad Request", "Forbidden", "Authentication Required", "Service Unavailable", "Timeout", "Not Supported"}
 
-	//Set Success response ratio to 60%
+	//Set Success response ratio
+	ratio := rand.Intn(10)
 	p := rand.Intn(10)
-	if p > 6 {
+
+	if p > ratio {
 		rc := rand.Intn(len(codes))
+		status = "FAILED"
 		code = codes[rc]
 		msg = messages[rc]
 	}
