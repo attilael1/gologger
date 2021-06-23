@@ -43,7 +43,7 @@ func init() {
 }
 
 func main() {
-	if *version == true {
+	if *version {
 		ShowVersion()
 	}
 
