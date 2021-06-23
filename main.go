@@ -16,8 +16,6 @@ const (
 	defaultPath = "/"
 	loggerPath  = "/logger"
 	method      = "GET"
-	//By sets creator
-	By = "attilael1"
 )
 
 //flags of the app
@@ -25,14 +23,6 @@ var (
 	address, path *string
 	port          *int
 	version       *bool
-	//Version sets app version
-	Version string
-	//GitCommit sets commit info
-	GitCommit string
-	//GitBranch sets git branch
-	GitBranch string
-	//BuildDate sets build date
-	BuildDate string
 )
 
 func init() {
@@ -86,7 +76,7 @@ func loggerApp(w http.ResponseWriter, r *http.Request) {
 
 //ShowVersion shows app version
 func ShowVersion() {
-	fmt.Printf("Version: %v, Commit: %v-%v, Build: %v, By: %v\n", Version, GitCommit, GitBranch, BuildDate, By)
+	fmt.Printf("Version: 1.0")
 	os.Exit(0)
 }
 
