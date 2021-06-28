@@ -9,7 +9,7 @@ gologger - Simple webserver for testing purposes.
 Usage of gologger:
   
     -a string
-        Hostname/IP address (default "localhost")  
+        Hostname/IP address (default "0.0.0.0")  
 
     -p int
         Port (default 8080)

@@ -1,5 +1,5 @@
 # Use official golang alpine base image
-FROM golang:1.13-alpine as builder
+FROM golang:1.16-alpine as builder
 
 # Add source code
 ADD . /app
@@ -8,7 +8,7 @@ ADD . /app
 WORKDIR /app
 
 # Build app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o gologger .
 
 ######## Start a new stage from scratch #######
 FROM alpine:latest  
@@ -25,10 +25,10 @@ RUN rm -rf /var/cache/apk/*
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+COPY --from=builder /app/gologger .
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Command to run the executable
-CMD ./main -a 0.0.0.0 -p 8080
+CMD ./gologger

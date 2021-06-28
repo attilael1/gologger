@@ -20,13 +20,13 @@ const (
 
 //flags of the app
 var (
-	address, path *string
-	port          *int
-	version       *bool
+	address *string
+	port    *int
+	version *bool
 )
 
 func init() {
-	address = flag.String("a", "localhost", "Hostname/IP address")
+	address = flag.String("a", "0.0.0.0", "Hostname/IP address")
 	port = flag.Int("p", 8080, "Port")
 	version = flag.Bool("v", false, "Display version information")
 	flag.Parse()
