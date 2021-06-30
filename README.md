@@ -14,8 +14,6 @@ Usage of gologger:
     -p int
         Port (default 8080)
 
-    -v  Display version information
-
 Example:
 
     gologger -a 192.168.99.78 -p 9090

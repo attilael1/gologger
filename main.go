@@ -7,7 +7,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -18,73 +17,66 @@ const (
 	method      = "GET"
 )
 
-//flags of the app
+//vars of the app
 var (
-	address *string
-	port    *int
-	version *bool
+	address    *string
+	port       *int
+	codes      = []int{101, 105, 108, 140, 155, 1205, 666, 510, 419, 440}
+	messages   = []string{"Unauthorized", "Service Not Found", "No Response From Server", "System Error", "Bad Request", "Forbidden", "Authentication Required", "Service Unavailable", "Timeout", "Not Supported"}
+	operations = []string{"buyProduct", "getProducts", "queryBalance", "changeUser", "updateUser", "deleteUser", "cancelProduct", "getBalance", "getUser", "addUser"}
+	users      = []string{"cthulhu", "yog-sothoth", "dagon", "hastur", "abhoth", "ubbo-sathla", "nyarlathotep", "shub-niggurath", "ghatanothoa", "shoggoth"}
 )
 
 func init() {
 	address = flag.String("a", "0.0.0.0", "Hostname/IP address")
 	port = flag.Int("p", 8080, "Port")
-	version = flag.Bool("v", false, "Display version information")
 	flag.Parse()
 }
 
 func main() {
-	if *version {
-		ShowVersion()
+	err := run()
+	if err != nil {
+		log.Fatalf("%v\n", err.Error())
 	}
+}
 
-	bind := fmt.Sprintf("%v:%v", *address, *port)
-	http.HandleFunc(defaultPath, runApp)
-	http.HandleFunc(loggerPath, loggerApp)
+func run() error {
+	mux := http.NewServeMux()
+	bind := fmt.Sprintf("%v:%v", address, port)
+
+	mux.Handle(defaultPath, isRequestOk(runApp))
+	mux.Handle(loggerPath, isRequestOk(loggerApp))
+
 	log.Println("Server started...")
-
-	err := http.ListenAndServe(bind, nil)
-	checkError("ListenAndServe:", err)
+	return http.ListenAndServe(bind, mux)
 }
 
 //runApp displays port of server
 func runApp(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
-	if r.URL.Path != defaultPath {
-		http.Error(w, "Not Found", http.StatusNotFound)
-		return
-	}
-	if r.Method != method {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	fmt.Fprintln(w, "Running App On Port", *port)
+	fmt.Fprintln(w, "Running App On Port", port)
 }
 
-//loggerApp starts logging data to file
+//loggerApp logs transactional data
 func loggerApp(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
-	if r.URL.Path != loggerPath {
-		http.Error(w, "Not Found", http.StatusNotFound)
-		return
-	}
-	if r.Method != method {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	fmt.Fprintf(w, "%v\n", Trans())
 }
 
-//ShowVersion shows app version
-func ShowVersion() {
-	fmt.Printf("Version: 1.0")
-	os.Exit(0)
-}
-
-//checkError takes a string and an error to log an error message
-func checkError(m string, err error) {
-	if err != nil {
-		log.Fatalf("%v: %v\n", m, err.Error())
-	}
+//isRequestOk is a middleware to validate a request
+func isRequestOk(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.URL.Path != defaultPath && r.URL.Path != loggerPath:
+			http.Error(w, "Not Found", http.StatusNotFound)
+			return
+		case r.Method != method:
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		default:
+			w.Header().Set("Content-Type", "text/plain")
+			endpoint(w, r)
+			return
+		}
+	})
 }
 
 //Trans returns a string like a transaction log with some fields separated by pipes
@@ -93,8 +85,6 @@ func Trans() string {
 	status := "SUCCESS"
 	code := 0
 	msg := "SUCCESS"
-	codes := []int{101, 105, 108, 140, 155, 1205, 666, 510, 419, 440}
-	messages := []string{"Unauthorized", "Service Not Found", "No Response From Server", "System Error", "Bad Request", "Forbidden", "Authentication Required", "Service Unavailable", "Timeout", "Not Supported"}
 
 	//Set Success response ratio
 	ratio := rand.Intn(10)
@@ -108,11 +98,9 @@ func Trans() string {
 	}
 
 	duration := rand.Intn(10000)
-	operations := []string{"buyProduct", "getProducts", "queryBalance", "changeUser", "updateUser", "deleteUser", "cancelProduct", "getBalance", "getUser", "addUser"}
 	ro := rand.Intn(len(operations))
 	operation := operations[ro]
 
-	users := []string{"cthulhu", "yog-sothoth", "dagon", "hastur", "abhoth", "ubbo-sathla", "nyarlathotep", "shub-niggurath", "ghatanothoa", "shoggoth"}
 	ri := rand.Intn(len(users))
 	user := users[ri]
 
