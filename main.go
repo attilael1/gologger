@@ -42,7 +42,7 @@ func main() {
 
 func run() error {
 	mux := http.NewServeMux()
-	bind := fmt.Sprintf("%v:%v", address, port)
+	bind := fmt.Sprintf("%v:%v", *address, *port)
 
 	mux.Handle(defaultPath, isRequestOk(runApp))
 	mux.Handle(loggerPath, isRequestOk(loggerApp))
