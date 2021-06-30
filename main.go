@@ -53,7 +53,7 @@ func run() error {
 
 //runApp displays port of server
 func runApp(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Running App On Port", port)
+	fmt.Fprintln(w, "Running App On Port", *port)
 }
 
 //loggerApp logs transactional data
