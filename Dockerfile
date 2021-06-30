@@ -1,5 +1,5 @@
 # Use official golang alpine base image
-FROM golang:1.16-alpine as builder
+FROM golang:alpine as builder
 
 # Add source code
 ADD . /app
